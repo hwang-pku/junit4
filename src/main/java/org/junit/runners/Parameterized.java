@@ -385,12 +385,20 @@ public class Parameterized extends Suite {
             String dataTypes = "";
             // finding the data type of PUTs input
             Object[] param = normalizeParameters(allParametersResult.get(0));
+            for (Object parameter : allParameters) {
+                Object[] tmp = normalizeParameters(parameter);
+                for (int i = 0; i<parameterCount; i++)
+                    if (param[i] == null && tmp[i] != null)
+                        param[i] = tmp[i];
+                    else if (param[i] != null && tmp[i] != null && !param[i].getClass().equals(tmp[i].getClass()))
+                    {
+                        System.out.println("PUTs Input Data Types: ???");
+                        return;
+                    }
+            }
             dataTypes = param[0].getClass().getCanonicalName();
             for (int j = 1; j < parameterCount; j++) {
-                if(param[j] == null)
-                    dataTypes = dataTypes + ";null";
-                else
-                    dataTypes = dataTypes + ";" + param[j].getClass().getCanonicalName();
+                dataTypes = dataTypes + ";" + param[j].getClass().getCanonicalName();
             }
             System.out.println("PUTs Input Data Types: "+ dataTypes);
         }
