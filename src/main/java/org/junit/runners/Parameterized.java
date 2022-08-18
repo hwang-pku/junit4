@@ -382,6 +382,17 @@ public class Parameterized extends Suite {
             runnerOverride = assumptionViolationRunner;
             parameterCount =
                     allParameters.isEmpty() ? 0 : normalizeParameters(allParameters.get(0)).length;
+            String dataTypes = "";
+            // finding the data type of PUTs input
+            Object[] param = normalizeParameters(allParametersResult.get(0));
+            dataTypes = param[0].getClass().getCanonicalName();
+            for (int j = 1; j < parameterCount; j++) {
+                if(param[j] == null)
+                    dataTypes = dataTypes + ";null";
+                else
+                    dataTypes = dataTypes + ";" + param[j].getClass().getCanonicalName();
+            }
+            System.out.println("PUTs Input Data Types: "+ dataTypes);
         }
 
         private List<Runner> createRunners() throws Exception {
