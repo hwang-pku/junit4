@@ -385,20 +385,24 @@ public class Parameterized extends Suite {
             String dataTypes = "";
             // finding the data type of PUTs input
             Object[] param = normalizeParameters(allParametersResult.get(0));
+            Class<?>[] klasses = new Class<?>[parameterCount];
+            for (int i =0; i<parameterCount; i++)
+                if (param[i] != null)
+                    klasses[i] = param[i].getClass();
+                else
+                    klasses[i] = null;
             for (Object parameter : allParameters) {
                 Object[] tmp = normalizeParameters(parameter);
                 for (int i = 0; i<parameterCount; i++)
-                    if (param[i] == null && tmp[i] != null)
-                        param[i] = tmp[i];
-                    else if (param[i] != null && tmp[i] != null && !param[i].getClass().equals(tmp[i].getClass()))
-                    {
-                        System.out.println("PUTs Input Data Types: ???");
-                        return;
-                    }
+                    if (klasses[i] == null && tmp[i] != null)
+                        klasses[i] = tmp[i].getClass();
+                    else if (klasses[i] != null && tmp[i] != null && !klasses[i].equals(tmp[i].getClass()))
+                        while (!klasses[i].isAssignableFrom(tmp[i].getClass())) 
+                            klasses[i] = klasses[i].getSuperclass();
             }
-            dataTypes = param[0].getClass().getCanonicalName();
+            dataTypes = klasses[0].getCanonicalName();
             for (int j = 1; j < parameterCount; j++) {
-                dataTypes = dataTypes + ";" + param[j].getClass().getCanonicalName();
+                dataTypes = dataTypes + ";" + klasses[j].getCanonicalName();
             }
             System.out.println("PUTs Input Data Types: "+ dataTypes);
         }
